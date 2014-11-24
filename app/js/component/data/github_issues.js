@@ -23,6 +23,11 @@ define([
 
     function githubIssues() {
 
+      this.defaultAttrs({
+          issues : [] 
+      });
+
+
       this.createIssue = function (ev, data) {
         var url, repositoryURL;
         repositoryURL = this.getURLFromProject(data.projectName);
@@ -42,6 +47,8 @@ define([
             })
           }.bind(this)
         });
+
+      
       };
 
       this.addIssue = function (ev, data) {
@@ -116,14 +123,14 @@ define([
               issues: issuesFromProjects
             });
 
+            this.attr.issues = this.attr.issues.concat(issuesFromProjects);
+
             if (data.page == 1) {
               this.trigger('data:issues:clearExportCsvLink');
             }
 
             if (issuesFromProjects.length > 0) {
-              this.trigger('data:issues:mountExportCsvLink', {
-                issues: issuesFromProjects
-              });
+  
               this.trigger('ui:needs:issues', data);
             }
           }.bind(this)
@@ -384,6 +391,12 @@ define([
         this.on('ui:unassign:user', this.unassignMyselfToIssue);
         this.on('ui:blockUI', this.blockUI);
         this.on('ui:unblockUI', this.unblockUI);
+		this.on('#export_csv', 'click', function(ev,data){
+                this.trigger('data:issues:mountExportCsvLink', {
+                    issues: this.attr.issues
+                });
+        });
+
       });
     }
   }
